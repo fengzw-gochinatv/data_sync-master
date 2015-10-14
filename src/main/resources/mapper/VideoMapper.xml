@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.VideoSqlDao">
+
+    <!-- cache VideoCacheResultMap -->
+    <resultMap id="VideoResultMap" type="com.gochinatv.datasync.bean.VideoPo">
+        <id column="id" property="vid" jdbcType="BIGINT"/>
+        <result column="name" property="name"/>
+        <result column="album_id" property="aid"/>
+        <result column="aname" property="aname"/>
+        <result column="description" property="description"/>
+        <result column="tag" property="tag"/>
+        <result column="vedio_type" property="vedioType"/>
+        <result column="subname" property="subname"/>
+        <result column="standard_pic" property="standardPic"/>
+        <result column="isdisplay" property="isdisplay"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="displayOrder" property="displayOrder"/>
+        <result column="installments" property="installments" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <collection property="playInfo" javaType="ArrayList" ofType="com.gochinatv.datasync.bean.PlayInfo">
+            <result column="remotevid" property="remotevid"/>
+            <result column="site_id" property="siteId"/>
+            <result column="dur" property="duration"/>
+            <result column="hvStartTime" property="hvStartTime"/>
+            <result column="hvEndTime" property="hvEndTime"/>
+        </collection>
+    </resultMap>
+
+    <select id="getVideoPo" parameterType="java.lang.Long" resultMap="VideoResultMap">
+       select v.*,p.remotevid,p.site_id,p.third_party_playurl,p.duration as dur,p.hvStartTime,p.hvEndTime,a.name as aname
+       from VIDEO v left join ALBUM a on a.id=v.album_id left join VIDEO_PROPERTY p on v.id=p.video_id
+       where v.id=#{vid} and v.isdisplay=1 AND  p.status>=5 AND p.remotevid IS NOT NULL AND p.remotevid!=''
+   </select>
+
+
+    <select id="getVideoList" parameterType="java.lang.Long" resultMap="VideoResultMap">
+       select v.*,p.remotevid,p.site_id,p.third_party_playurl,p.duration as dur,p.hvStartTime,p.hvEndTime,a.name as aname
+       from VIDEO v left join ALBUM a on a.id=v.album_id left join VIDEO_PROPERTY p on v.id=p.video_id
+       where v.album_id=#{albumId} and v.isdisplay=1 AND  p.status>=5 AND p.remotevid IS NOT NULL AND p.remotevid!=''
+   </select>
+
+    <select id="getVideoIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+       select distinct v.id from VIDEO v inner join  ALBUM a on v.album_id=a.id where v.isdisplay=1 and a.isdisplay=1 order by v.id
+   </select>
+
+    <select id="getInstallmens" parameterType="java.lang.Long" resultType="java.lang.String">
+       select installments from VIDEO v  where v.id=#{vid}
+   </select>
+</mapper>

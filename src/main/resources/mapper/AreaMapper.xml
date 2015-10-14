@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.AreaSqlDao">
+
+    <resultMap id="AreaResultMap" type="com.gochinatv.datasync.bean.AreaPo">
+        <id column="id" property="areaId" jdbcType="BIGINT"/>
+        <result column="country" property="name"/>
+    </resultMap>
+
+    <select id="getAreaPo" parameterType="java.lang.Long" resultMap="AreaResultMap">
+              select id, country from AREA where id=#{areaId}
+   </select>
+
+    <select id="getAreaList" resultMap="AreaResultMap">
+              select id, country from AREA
+   </select>
+</mapper>

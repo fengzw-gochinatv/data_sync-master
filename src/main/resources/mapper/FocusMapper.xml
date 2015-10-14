@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.FocusSqlDao">
+
+    <resultMap id="FocusResultMap" type="com.gochinatv.datasync.bean.FocusPo">
+        <id column="id" property="focusId" jdbcType="BIGINT"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="name" property="focusName" jdbcType="VARCHAR"/>
+        <result column="image" property="image"/>
+        <result column="backImage" property="backImage" />
+        <result column="sort" property="sort" jdbcType="VARCHAR"/>
+
+        <collection property="data" javaType="ArrayList" ofType="com.gochinatv.datasync.bean.FocusData">
+            <result column="description" property="desc"/>
+            <result column="picUrl" property="picUrl"/>
+            <result column="redirectUrl" property="redirectUrl"/>
+            <result column="title" property="title"/>
+            <result column="d_type" property="type"/>
+            <result column="sourceSite" property="sourceSite"/>
+        </collection>
+    </resultMap>
+
+    <select id="getFocusPo" parameterType="java.lang.Long" resultMap="FocusResultMap">
+            SELECT p.* ,d.description,d.picUrl,d.redirectUrl,d.title,d.type as d_type,d.sourceSite
+            FROM FOCUS_PICTURE p  JOIN FOCUS_DATA d ON p.id=d.fpId  where p.id=#{id} and d.parentId=-1 order by p.id,(ordering+0)
+     </select>
+
+    <select id="getFocusList" resultMap="FocusResultMap">
+          SELECT p.* ,d.description,d.picUrl,d.redirectUrl,d.title,d.type AS d_type,d.sourceSite  FROM FOCUS_PICTURE p JOIN FOCUS_DATA d ON p.id=d.fpId WHERE d.parentId=-1 ORDER BY p.id,(ordering+0)
+     </select>
+</mapper>

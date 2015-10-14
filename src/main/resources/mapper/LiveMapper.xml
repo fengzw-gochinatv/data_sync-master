@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.LiveSqlDao">
+	<resultMap id="LiveTypeBaseResultMap" type="com.gochinatv.datasync.bean.Live">
+		<id column="lid" property="liveId" jdbcType="BIGINT" />
+		<result column="lname" property="name" />
+		<result column="ldisplayOrder" property="displayOrder" />
+        <collection property="list" javaType="ArrayList" ofType="com.gochinatv.datasync.bean.TvLive">
+            <result column="live_num" property="liveNum"/>
+			<result column="live_name" property="liveName"/>
+			<result column="live_type_id" property="liveTypeId"/>
+			<result column="live_source" property="liveSource"/>
+			<result column="source_address" property="sourceAddress"/>
+			<result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+			<result column="status" property="status" jdbcType="VARCHAR" />
+        </collection>
+	</resultMap>
+
+	<select id="getLive" resultMap="LiveTypeBaseResultMap" parameterType="java.lang.Long">
+		select t.*,l.id as lid,l.`name` as lname from LIVETYPE l inner join TVLIVE t ON l.id=t.live_type_id where id=#{liveId} t.status=1  ORDER BY t.live_num
+	</select>
+    <select id="getLiveList" resultMap="LiveTypeBaseResultMap">
+		select t.*,l.id as lid,l.`name` as lname ,l.display_order as ldisplayOrder from LIVETYPE l left join TVLIVE t ON l.id=t.live_type_id where t.status=1  ORDER BY t.live_num
+	</select>
+	
+
+</mapper>

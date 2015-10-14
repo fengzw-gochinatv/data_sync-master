@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.AlbumSqlDao">
+
+
+    <resultMap id="AlbumResultMap" type="com.gochinatv.datasync.bean.AlbumPo">
+        <id column="id" property="aid"/>
+        <result column="name" property="name"/>
+        <result column="english_name" property="englishName"/>
+        <result column="channel_id" property="channelId"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="language_name" property="language"/>
+        <result column="description" property="description"/>
+        <result column="tag" property="tag"/>
+        <result column="area" property="areaId"/>
+        <result column="areaName" property="areaName"/>
+        <result column="episodes" property="episodes"/>
+        <result column="copyrightName" property="copyrightName"/>
+        <result column="isend" property="isend"/>
+        <result column="director_name" property="directory"/>
+        <result column="starring_name" property="starring"/>
+        <result column="host_name" property="host"/>
+        <result column="standard_pic" property="standardPic"/>
+        <result column="ystandard_pic" property="ystandardPic"/>
+        <result column="category" property="categoryIds"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="showtimes" property="showtimes"/>
+        <result column="isUpdate" property="isUpdate"/>
+        <result column="update_fre" property="updateFre"/>
+        <result column="age" property="age"/>
+        <result column="serial_type" property="serialType"/>
+        <result column="score" property="score"/>
+        <result column="television" property="television"/>
+        <result column="guest" property="guest"/>
+        <result column="terminal" property="terminal"/>
+        <result column="destination" property="destination"/>
+        <result column="terminal" property="terminal"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="last_modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="newVideoId" property="newVideoId"/>
+        <result column="oldVideoId" property="oldVideoId"/>
+        <result column="ischarge" property="ischarge"/>
+        <result column="islive" property="islive"/>
+  		<result column="ageLevel" property="ageLevel"/>
+        <association column="newVideoId" property="newVideoInstallments" jdbcType="BIGINT" select="com.gochinatv.datasync.dao.sqlDao.VideoSqlDao.getInstallmens"/>
+        <association column="oldVideoId" property="oldVideoInstallments" jdbcType="BIGINT" select="com.gochinatv.datasync.dao.sqlDao.VideoSqlDao.getInstallmens"/>
+    </resultMap>
+
+    <select id="getAlbumPo" parameterType="java.lang.Long" resultMap="AlbumResultMap">
+        select a.*,
+        (select id from VIDEO where a.id=album_id and isdisplay = 1 and vedio_type = 1 order by CONVERT(installments,DECIMAL(10)) desc, modify_time desc, display_order desc limit 0,1) as newVideoId,
+        (select id from VIDEO where a.id=album_id and isdisplay = 1 and vedio_type = 1 order by CONVERT(installments,DECIMAL(10)) asc, modify_time desc, display_order desc limit 0,1) oldVideoId,
+        (select GROUP_CONCAT(name) from DIRECTOR WHERE  FIND_IN_SET(id,director))  director_name,
+        (select GROUP_CONCAT(name) from STARRING WHERE  FIND_IN_SET(id,starring))  starring_name,
+        (select GROUP_CONCAT(name) from HOST WHERE  FIND_IN_SET(id,host))  host_name,
+        (select GROUP_CONCAT(name) from CATEGORY WHERE  FIND_IN_SET(id,a.category))  category_name,
+        (select name from LANGUAGE WHERE  id=a.language)  language_name,
+         ch.name as channel_name,
+         cp.name as copyrightName,
+         ar.country as areaName
+        from ALBUM a
+        left join COPYRIGHT_COMPANY cp on cp.id=a.copyright_compeny
+        left join CHANNEL ch on ch.id=channel_id
+        left join AREA ar on ar.id=a.area
+        left join HOST ho on ho.id=a.host
+        where  a.id=#{albumId} and a.isdisplay=1
+    </select>
+
+    <select id="getAlbumList" parameterType="java.lang.Long" resultMap="AlbumResultMap">
+        select a.*,
+        (select id from VIDEO where a.id=album_id and isdisplay = 1 and vedio_type = 1 order by CONVERT(installments,DECIMAL(10)) desc, modify_time desc, display_order desc limit 0,1) as newVideoId,
+        (select id from VIDEO where a.id=album_id and isdisplay = 1 and vedio_type = 1 order by CONVERT(installments,DECIMAL(10)) asc, modify_time desc, display_order desc limit 0,1) oldVideoId,
+        (select GROUP_CONCAT(name) from DIRECTOR WHERE  FIND_IN_SET(id,director))  director_name,
+        (select GROUP_CONCAT(name) from STARRING WHERE  FIND_IN_SET(id,starring))  starring_name,
+        (select GROUP_CONCAT(name) from HOST WHERE  FIND_IN_SET(id,host))  host_name,
+        (select GROUP_CONCAT(name) from CATEGORY WHERE  FIND_IN_SET(id,a.category))  category_name,
+        (select name from LANGUAGE WHERE  id=a.language)  language_name,
+         ch.name as channel_name,
+         cp.name as copyrightName,
+         ar.country as areaName
+        from ALBUM a
+        left join COPYRIGHT_COMPANY cp on cp.id=a.copyright_compeny
+        left join CHANNEL ch on ch.id=channel_id
+        left join AREA ar on ar.id=a.area
+        left join HOST ho on ho.id=a.host
+        where  a.channel_id=#{channelId} and a.isdisplay=1
+    </select>
+
+    <select id="getAlbumIds" resultType="java.lang.Long">
+          select id from ALBUM where isdisplay=1 order by id
+    </select>
+</mapper>

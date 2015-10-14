@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.LabelAlbumSqlDao">
+
+    <resultMap id="LabelAlbumResultMap" type="com.gochinatv.datasync.bean.LabelAlbumPo">
+        <result column="id" property="lid" jdbcType="BIGINT"/>
+        <result column="label_id" property="labelId" jdbcType="BIGINT"/>
+        <result column="album_id" property="albumId" jdbcType="BIGINT"/>
+        <result column="sequnces" property="sequnces" jdbcType="BIGINT"/>
+        <result column="albumName" property="albumName" jdbcType="VARCHAR"/>
+        <result column="labelName" property="labelName" jdbcType="VARCHAR"/>
+        <result column="copyrightCompeny" property="copyrightCompeny" jdbcType="VARCHAR"/>
+        <result column="terminal" property="terminal"/>
+    </resultMap>
+
+    <select id="getLabelAlumPoList" parameterType="java.lang.Long" resultMap="LabelAlbumResultMap">
+        select la.id,la.label_id,la.album_id,la.sequnces,l.name as labelName,a.name as albumName,a.copyright_compeny as copyrightCompeny,a.terminal as terminal
+        from LABEL l,LABEL_ALBUM la,ALBUM a
+        where l.id=la.label_id and la.album_id=a.id and l.id=#{labelId} and a.isdisplay=1
+        order by sequnces desc
+    </select>
+
+    <select id="getListByAlbumId" parameterType="java.lang.Long" resultMap="LabelAlbumResultMap">
+        select la.id,la.label_id,la.album_id,la.sequnces,l.name as labelName,a.name as albumName,a.copyright_compeny as copyrightCompeny,a.terminal as terminal
+        from LABEL l,LABEL_ALBUM la,ALBUM a
+        where l.id=la.label_id and la.album_id=a.id and a.id=#{albumId} and a.isdisplay=1
+        order by sequnces desc
+    </select>
+    <select id="getAllList" resultMap="LabelAlbumResultMap">
+        select  la.id,la.label_id,la.album_id,la.sequnces,l.name as labelName,a.name as albumName,a.copyright_compeny as copyrightCompeny,a.terminal as terminal
+        from LABEL l,LABEL_ALBUM la,ALBUM a
+        where l.id=la.label_id and la.album_id=a.id and a.isdisplay=1
+        order by sequnces desc
+    </select>
+
+
+    <select id="getIds" resultType="java.lang.Long" parameterType="java.util.Map" >
+        select  la.id
+        from LABEL l,LABEL_ALBUM la,ALBUM a
+        where l.id=la.label_id and la.album_id=a.id and a.isdisplay=1
+        <if test="albumId!=null">
+            and la.album_id=#{albumId}
+        </if>
+        <if test="labelId!=null">
+            and la.label_id=#{labelId}
+        </if>
+        order by la.id
+    </select>
+
+
+    <select id="getOne"  parameterType="java.lang.Long"  resultMap="LabelAlbumResultMap">
+       select la.id,la.label_id,la.album_id,la.sequnces,l.name as labelName,a.name as albumName,a.copyright_compeny as copyrightCompeny,a.terminal as terminal
+        from LABEL l,LABEL_ALBUM la,ALBUM a
+        where l.id=la.label_id and la.album_id=a.id and la.id=#{lid} and a.isdisplay=1
+        order by sequnces desc
+    </select>
+</mapper>

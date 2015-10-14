@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gochinatv.datasync.dao.sqlDao.MenuSqlDao">
+
+    <resultMap id="MenuResultMap" type="com.gochinatv.datasync.bean.MenuPo">
+        <id column="id" property="menuId" jdbcType="BIGINT"/>
+        <result column="name" property="text"/>
+        <result column="url" property="url"/>
+        <result column="icon_url" property="imgUrl"/>
+        <result column="img_bright_url" property="imgBrightUrl"/>
+        <result column="show_type" property="showType"/>
+        <result column="" property="channelId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="plat_form" property="platform"  />
+        <result column="focus_id" property="focusId"  />
+        <result column="english_name" property="englishName"/>
+        <result column="display_order" property="displayOrder"/>
+    </resultMap>
+
+    <select id="queryList" resultMap="MenuResultMap">
+        select a.*,p.name as parentName from MENU a,MENU p WHERE a.parent_id=p.id
+        order by parent_id,display_order asc
+    </select>
+
+    <select id="queryParentId" resultType="java.lang.Long">
+        SELECT id FROM MENU WHERE parent_id=-1
+    </select>
+</mapper>
